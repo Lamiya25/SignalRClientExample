@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="signalr.min.js"></script>
+    <script src="jquery.min.js"></script>
+
+
+    <script>
+        $(document).ready(()=>{
+const connection = new signalR.HubConnectionBuilder()
+.withUrl("https://localhost:7069/myhub")
+.withAutomaticReconnect([1000,1000,2000])   //0 san 2san 10san 30cu san --> baglanti var amma qopanda istifade olunur
+.build();
+
+async function start(){
+    try {
+        await connection.start();
+    }
+    catch(error){
+        setTimeout(()=> start(), 2000);
+    }
+
+}
+start();
+
+const status = $("#status");
+
+connection.onreconnecting(error => {
+    updateStatus("Reconnecting...", "blue");
+});
+
+connection.onreconnected(connectionId => {
+    updateStatus("Connected", "green");
+});
+
+connection.onclose(connectionId => {
+    updateStatus("Connection Closed", "red");
+});
+
+function updateStatus(message, color) {
+    status.css("background-color", color);
+    status.html(message).fadeIn(2000).fadeOut(2000);
+}
+
+$("#btnSend").click(()=>{
+let message= $("#txtMessage").val();
+
+connection.invoke("SendMessageAsync", message).catch(error=>console.log(`Error sending message:  ${error}`));
+});
+connection.on("receiveMessage", message=>{
+$("#messages").append(message + "<br>");
+});
+
+//Baglanti hech qurulmadigi veziyyetlerde bu funksiyadan istifade edirik
+
+        });
+    </script>
+</head>
+<body>
+
+    <div id="status" style="display: none;"></div>
+
+    <input type="text" id="txtMessage">
+    <button id="btnSend">Send</button>
+    <div id="messages"></div>
+</body>
+</html>
