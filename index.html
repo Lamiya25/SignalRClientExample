@@ -8,7 +8,7 @@
     <script>
         $(document).ready(()=>{
 const connection = new signalR.HubConnectionBuilder()
-.withUrl("https://localhost:7069/myhub")
+.withUrl("https://localhost:7287/myhub")
 .withAutomaticReconnect([1000,1000,2000])   //0 san 2san 10san 30cu san --> baglanti var amma qopanda istifade olunur
 .build();
 
