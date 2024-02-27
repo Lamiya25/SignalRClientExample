@@ -42,6 +42,14 @@ function updateStatus(message, color) {
     status.html(message).fadeIn(2000).fadeOut(2000);
 }
 
+connection.on("userJoined", connectionId=>{
+    updateStatus(`${connectionId} is connected.`, "yellow")
+});
+
+connection.on("userLeaved", connectionId=>{
+    updateStatus(`${connectionId} is disconnected.`, "orange")
+});
+
 $("#btnSend").click(()=>{
 let message= $("#txtMessage").val();
 
