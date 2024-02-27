@@ -8,7 +8,8 @@
     <script>
         $(document).ready(()=>{
 const connection = new signalR.HubConnectionBuilder()
-.withUrl("https://localhost:7287/myhub")
+//.withUrl("https://localhost:7287/myhub")
+.withUrl("https://localhost:7287/messagehub")
 .withAutomaticReconnect([1000,1000,2000])   //0 san 2san 10san 30cu san --> baglanti var amma qopanda istifade olunur
 .build();
 
@@ -59,28 +60,47 @@ text+= `<li>${item}</li>`;
     $("#clients").html(text);
 });
 
-
-
-
 $("#btnSend").click(()=>{
 let message= $("#txtMessage").val();
 
-connection.invoke("SendMessageAsync", message).catch(error=>console.log(`Error sending message:  ${error}`));
+let connectionIds= $("#connectionIds").val().split(",");
+// connection.invoke("SendMessageAsync", message, connectionIds).catch(error=>console.log(`Error sending message:  ${error}`));
+//connection.invoke("SendMessageAsync", message, $("input[name=group]:checked").val()).catch(error=>console.log(`Error sending message:  ${error}`));
+connection.invoke("SendMessageAsync", message, $("input[name=group]:checked").val(), connectionIds).catch(error=>console.log(`Error sending message:  ${error}`));
 });
 connection.on("receiveMessage", message=>{
 $("#messages").append(message + "<br>");
 });
 
 //Baglanti hech qurulmadigi veziyyetlerde bu funksiyadan istifade edirik
+let _connectionId="";
+connection.on("getConnectionId", connectionId => {
+    _connectionId=connectionId;
+    $("#connectionId").html(`Connection Id: ${connectionId}`);
+});
 
-        });
+$("#btnEnterGroup").click(()=>{
+    let groupName= $("input[name=group]:checked").val();
+    connection.invoke("addGroup", _connectionId, groupName).catch(error => console.log(`sending message: ${error}`));
+});
+
+
+  });
     </script>
 </head>
 <body>
 
+    <div style="background-color: black; color: white;" id="connectionId"></div>
+<input type="radio" name="group" value="A">A
+<input type="radio" name="group" value="B">B
+<input type="radio" name="group" value="C">C
+<br>
+<button id="btnEnterGroup">Enter the group</button>
     <div id="status" style="display: none;"></div>
 
-    <input type="text" id="txtMessage">
+    <input type="text" id="txtMessage" placeholder="message">
+    <br>
+    <textarea  placeholder="Connection Id" id="connectionIds" cols="30" rows="10"></textarea>
     <button id="btnSend">Send</button>
     <div id="messages"></div>
 
