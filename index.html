@@ -50,6 +50,18 @@ connection.on("userLeaved", connectionId=>{
     updateStatus(`${connectionId} is disconnected.`, "orange")
 });
 
+connection.on("clients", clientsData=>{
+       let text="";
+    $.each(clientsData, (index, item)=>{
+text+= `<li>${item}</li>`;
+    });
+
+    $("#clients").html(text);
+});
+
+
+
+
 $("#btnSend").click(()=>{
 let message= $("#txtMessage").val();
 
@@ -71,5 +83,9 @@ $("#messages").append(message + "<br>");
     <input type="text" id="txtMessage">
     <button id="btnSend">Send</button>
     <div id="messages"></div>
+
+    <div>
+        <ul id="clients"></ul>
+    </div>
 </body>
 </html>
