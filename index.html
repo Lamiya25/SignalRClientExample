@@ -64,9 +64,12 @@ $("#btnSend").click(()=>{
 let message= $("#txtMessage").val();
 
 let connectionIds= $("#connectionIds").val().split(",");
+
+let groups= $("#txtGroups").val().split(",");
 // connection.invoke("SendMessageAsync", message, connectionIds).catch(error=>console.log(`Error sending message:  ${error}`));
 //connection.invoke("SendMessageAsync", message, $("input[name=group]:checked").val()).catch(error=>console.log(`Error sending message:  ${error}`));
-connection.invoke("SendMessageAsync", message, $("input[name=group]:checked").val(), connectionIds).catch(error=>console.log(`Error sending message:  ${error}`));
+//connection.invoke("SendMessageAsync", message, $("input[name=group]:checked").val(), connectionIds).catch(error=>console.log(`Error sending message:  ${error}`));
+connection.invoke("SendMessageAsync", message, groups).catch(error=>console.log(`Error sending message:  ${error}`)); 
 });
 connection.on("receiveMessage", message=>{
 $("#messages").append(message + "<br>");
@@ -98,7 +101,8 @@ $("#btnEnterGroup").click(()=>{
 <button id="btnEnterGroup">Enter the group</button>
     <div id="status" style="display: none;"></div>
 
-    <input type="text" id="txtMessage" placeholder="message">
+    <input type="text" id="txtMessage" placeholder="message"> <br>
+    <input type="text" id="txtGroups" placeholder="Groups">
     <br>
     <textarea  placeholder="Connection Id" id="connectionIds" cols="30" rows="10"></textarea>
     <button id="btnSend">Send</button>
